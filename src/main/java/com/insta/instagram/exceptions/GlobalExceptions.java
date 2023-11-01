@@ -16,19 +16,28 @@ public class GlobalExceptions {
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ErrorDetails> UserExceptionHandler(UserException e, WebRequest req) {
-        ErrorDetails errorDetails = new ErrorDetails(e.getMessage(),req.getDescription(false), LocalDateTime.now());
-        return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.BAD_REQUEST);
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(req.getDescription(false));
+        errorDetails.setMessage(e.getMessage());
+        errorDetails.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDetails> methodArgumentNotValidException(MethodArgumentNotValidException me) {
-        ErrorDetails errorDetails = new ErrorDetails(Objects.requireNonNull(me.getBindingResult().getFieldError()).getDefaultMessage(),"validation error", LocalDateTime.now());
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(Objects.requireNonNull(me.getBindingResult().getFieldError()).getDefaultMessage());
+        errorDetails.setMessage(me.getMessage());
+        errorDetails.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> otherExceptionHandler(Exception e, WebRequest req) {
-        ErrorDetails errorDetails = new ErrorDetails(e.getMessage(),req.getDescription(false), LocalDateTime.now());
-        return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.BAD_REQUEST);
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(req.getDescription(false));
+        errorDetails.setMessage(e.getMessage());
+        errorDetails.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 }

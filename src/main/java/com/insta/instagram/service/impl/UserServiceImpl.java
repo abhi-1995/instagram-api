@@ -5,6 +5,8 @@ import com.insta.instagram.exceptions.UserException;
 import com.insta.instagram.model.User;
 import com.insta.instagram.repository.UserRepository;
 import com.insta.instagram.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,7 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public class UserServiceImpl implements UserService {
+
+    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -66,8 +71,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByUsername(Integer username) throws UserException {
-        return null;
+    public User findUserByUsername(String username) throws UserException {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            logger.error("User not found with username {}",username);
+            throw new UserException("User Not Found with User-Name "+username);
+        }
+
+
+        return user.get();
     }
 
     @Override
@@ -107,16 +120,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findUserByIds(List<Integer> userIds) throws UserException {
-        return null;
+        return userRepository.findAllUsersByUserIds(userIds);
     }
 
     @Override
     public List<User> searchUser(String query) throws UserException {
-        return null;
+        List<User> users = userRepository.findByQuery(query);
+        if (users.size() == 0) {
+            throw new UserException("User not found");
+        }
+        return users;
     }
 
     @Override
     public User updateUserDetails(User updatedUser, User existingUser) throws UserException {
+
         return null;
     }
 
